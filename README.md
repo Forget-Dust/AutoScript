@@ -1,2 +1,2 @@
 # AutoScript
-- Linux汇总：`bash <(curl -sfSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/Linux.sh")`
+- Linux汇总：`bash <(curl -sfkSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/Linux.sh")`
