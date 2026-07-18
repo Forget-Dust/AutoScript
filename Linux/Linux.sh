@@ -15,6 +15,7 @@ done
 # 菜单项与命令（退出放第0项）
 ITEMS=(
     "退出"
+    "安全基线检查"
     "换源 (LinuxMirrors)"
     "CNS (binary.parso.org)"
     "Docker (LinuxMirrors)"
@@ -32,6 +33,7 @@ ITEMS=(
 
 CMDS=(
     ''
+    'bash <(curl -sfSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/Linux_Baseline_SecurityCheck.sh")'
     'bash <(curl -sfSL "https://linuxmirrors.cn/main.sh")'
     'bash <(curl -sfSL "http://binary.parso.org/builds.sh")'
     'bash <(curl -sfSL "https://linuxmirrors.cn/docker.sh")'
