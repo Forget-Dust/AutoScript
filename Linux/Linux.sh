@@ -48,7 +48,9 @@ run() {
 # ========== 1. 系统安全 ==========
 menu_security() {
     local ITEMS=("返回主菜单" "基线检查 (Forget-Dust)")
-    local CMDS=('' 'bash <(curl -sfSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/Linux_Baseline_SecurityCheck.sh")')
+    local CMDS=('' 
+        'bash <(curl -sfkSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/Linux_Baseline_SecurityCheck.sh")'
+    )
 
     while true; do
         clear
@@ -69,13 +71,12 @@ menu_thirdparty() {
         "换源 (LinuxMirrors)" "Docker (LinuxMirrors)"
         "雷池 WAF (长亭)" "1Panel" "LinuxEnvConfig（适用apt系列）"
     )
-    local CMDS=(
-        ''
-        'bash <(curl -sfSL "https://linuxmirrors.cn/main.sh")'
-        'bash <(curl -sfSL "https://linuxmirrors.cn/docker.sh")'
-        'bash <(curl -sfSL "https://waf-ce.chaitin.cn/release/latest/manager.sh")'
-        'bash <(curl -sfSL "https://resource.fit2cloud.com/1panel/package/quick_start.sh")'
-        'bash <(curl -sfSL "https://gitee.com/yijingsec/LinuxEnvConfig/raw/master/install.sh")'
+    local CMDS=(''
+        'bash <(curl -sfkSL "https://linuxmirrors.cn/main.sh")'
+        'bash <(curl -sfkSL "https://linuxmirrors.cn/docker.sh")'
+        'bash <(curl -sfkSL "https://waf-ce.chaitin.cn/release/latest/manager.sh")'
+        'bash <(curl -sfkSL "https://resource.fit2cloud.com/1panel/package/quick_start.sh")'
+        'bash <(curl -sfkSL "https://gitee.com/yijingsec/LinuxEnvConfig/raw/master/install.sh")'
     )
 
     while true; do
