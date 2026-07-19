@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
-  releases: write
 
 jobs:
   build-linux:
