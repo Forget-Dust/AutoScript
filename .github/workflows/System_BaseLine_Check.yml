@@ -33,7 +33,7 @@ jobs:
 
       - name: Build (Linux)
         run: |
-          pyinstaller -F -n baseline System_Python/BaseLine_Check.py --exclude-module winreg
+          pyinstaller -F -n baseline Python/System_BaseLine_Check.py --exclude-module winreg
           cp dist/baseline dist/baseline-linux
 
       - name: Upload artifact
@@ -60,7 +60,7 @@ jobs:
 
       - name: Build (Windows)
         run: |
-          pyinstaller -F -n baseline System_Python/BaseLine_Check.py
+          pyinstaller -F -n baseline Python/System_BaseLine_Check.py
           copy dist\baseline.exe dist\baseline-windows.exe
 
       - name: Upload artifact
