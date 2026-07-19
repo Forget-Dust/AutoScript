@@ -79,25 +79,20 @@ jobs:
         with:
           path: artifacts
 
-      - name: Create GitHub Release
+      - name: Publish to GitHub Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          make_latest: true
+          overwrite_files: true
+          fail_on_unmatched_files: true
           files: |
             artifacts/baseline-linux/baseline-linux
             artifacts/baseline-windows/baseline-windows.exe
           body: |
-            ## System Baseline Check 自动化构建
-
-            - `baseline-linux` → Linux (x86_64, glibc ≥ 2.39，Rocky 9 / Ubuntu 22.04+)
-            - `baseline-windows.exe` → Windows 10/11 / Server
-
-            使用：
-            bash
-            # Linux（需 chmod +x）
-            sudo ./baseline-linux
-            # Windows
-            .\baseline-windows.exe
-            ```
-            报告生成在可执行文件同级 `legendsec/` 下。
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ## System Baseline Check 自动化构建（`${{ github.ref_name }}`）
