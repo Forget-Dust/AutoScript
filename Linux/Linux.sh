@@ -47,9 +47,9 @@ run() {
 
 # ========== 1. 系统安全 ==========
 menu_security() {
-    local ITEMS=("返回主菜单" "基线检查 (Forget-Dust)")
+    local ITEMS=("返回主菜单" "安全基线检查 (Forget-Dust)")
     local CMDS=('' 
-        'bash <(curl -sfkSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/Linux_Baseline_SecurityCheck.sh")'
+        'bash <(curl -sfkSL "https://raw.githubusercontent.com/Forget-Dust/AutoScript/main/Linux/BaselineSecurityCheck.sh")'
     )
 
     while true; do
