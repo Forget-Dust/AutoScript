@@ -1,0 +1,95 @@
+name: Build System_Baseline_Check
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  releases: write
+
+jobs:
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y binutils patchelf
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Build (Linux)
+        run: |
+          pyinstaller -F -n baseline System_Python/BaseLine_Check.py --exclude-module winreg
+          cp dist/baseline dist/baseline-linux
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-linux
+          path: dist/baseline-linux
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Build (Windows)
+        run: |
+          pyinstaller -F -n baseline Python\System_BaseLine_Check.py
+          copy dist\baseline.exe dist\baseline-windows.exe
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-windows
+          path: dist/baseline-windows.exe
+
+  release:
+    name: Create Release
+    needs: [build-linux, build-windows]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/baseline-linux/baseline-linux
+            artifacts/baseline-windows/baseline-windows.exe
+          body: |
+            ## System Baseline Check 自动化构建
+
+            - `baseline-linux` → Linux (x86_64, glibc ≥ 2.39，Rocky 9 / Ubuntu 22.04+)
+            - `baseline-windows.exe` → Windows 10/11 / Server
+
+            使用：
