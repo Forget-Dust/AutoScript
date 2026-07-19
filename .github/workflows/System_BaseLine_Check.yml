@@ -5,6 +5,11 @@ on:
     tags:
       - "v*"
 
+# ★★★ 修正点 1：将 releases 放入 concurrency 中 ★★★
+concurrency:
+  group: releases
+  cancel-in-progress: true
+
 permissions:
   contents: write
   releases: write
@@ -34,7 +39,7 @@ jobs:
 
       - name: Build (Linux)
         run: |
-          # ★ 注意：如果你的脚本在 Python 文件夹下，这里路径要改对
+          # ★★★ 修正点 2：统一脚本路径，确保与仓库实际目录一致 ★★★
           pyinstaller -F -n baseline Python/BaseLine_Check.py --exclude-module winreg
           cp dist/baseline dist/baseline-linux
 
@@ -63,7 +68,7 @@ jobs:
 
       - name: Build (Windows)
         run: |
-          # ★ 注意：Windows 用 && 连接命令更稳定，且统一使用正斜杠 / 或反斜杠 \
+          # ★★★ 修正点 3：统一脚本路径，确保与仓库实际目录一致 ★★★
           pyinstaller -F -n baseline Python/BaseLine_Check.py
           copy dist\baseline.exe dist\baseline-windows.exe
 
@@ -92,11 +97,9 @@ jobs:
             artifacts/baseline-linux/baseline-linux
             artifacts/baseline-windows/baseline-windows.exe
           body: |
-            ## System Baseline Check
-            
-            - `baseline-linux` → Linux (x86_64)
-            - `baseline-windows.exe` → Windows 10/11
-            
-            使用说明见项目 README.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            ## System Baseline Check 自动化构建
+
+            - `baseline-linux` → Linux (x86_64, glibc ≥ 2.39，Rocky 9 / Ubuntu 22.04+)
+            - `baseline-windows.exe` → Windows 10/11 / Server
+
+            使用：
