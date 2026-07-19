@@ -3,7 +3,9 @@ name: Build System_Baseline_Check
 on:
   workflow_dispatch:
 
-permissions: contents: write
+permissions:
+  contents: write
+  releases: write
 
 jobs:
   build-linux:
@@ -12,16 +14,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: "3.11"
+        with: { python-version: "3.11" }
       - run: sudo apt-get update && sudo apt-get install -y binutils patchelf
       - run: pip install pyinstaller
       - run: |
           pyinstaller -F -n baseline Python/System_BaseLine_Check.py --exclude-module winreg
           cp dist/baseline dist/baseline-linux
       - uses: actions/upload-artifact@v4
-        with:
-          name: baseline-linux
-          path: dist/baseline-linux
+        with: { name: baseline-linux, path: dist/baseline-linux }
 
   build-windows:
     name: Build Windows
@@ -29,15 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
-        with: python-version: "3.11"
+        with: { python-version: "3.11" }
       - run: pip install pyinstaller
       - run: |
           pyinstaller -F -n baseline Python/System_BaseLine_Check.py
           copy dist\baseline.exe dist\baseline-windows.exe
       - uses: actions/upload-artifact@v4
-        with:
-          name: baseline-windows
-          path: dist/baseline-windows.exe
+        with: { name: baseline-windows, path: dist/baseline-windows.exe }
 
   release:
     name: Release
@@ -45,9 +43,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
-        with: path: artifacts
+        with: { path: artifacts }
       - uses: softprops/action-gh-release@v2
-        env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: System_BaseLine_Check
           name: System_BaseLine_Check
