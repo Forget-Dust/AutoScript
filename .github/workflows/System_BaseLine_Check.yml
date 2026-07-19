@@ -1,43 +1,24 @@
 name: Build System_Baseline_Check
 
 on:
-  push:
-    tags:
-      - "v*"
   workflow_dispatch:
 
-permissions:
-  contents: write    # releases / artifacts 都靠这个，不要再写 releases:
+permissions: contents: write
 
 jobs:
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install system deps
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y binutils patchelf
-
-      - name: Install PyInstaller
-        run: pip install pyinstaller
-
-      - name: Build (Linux)
-        run: |
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: python-version: "3.11"
+      - run: sudo apt-get update && sudo apt-get install -y binutils patchelf
+      - run: pip install pyinstaller
+      - run: |
           pyinstaller -F -n baseline Python/System_BaseLine_Check.py --exclude-module winreg
           cp dist/baseline dist/baseline-linux
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: baseline-linux
           path: dist/baseline-linux
@@ -45,48 +26,31 @@ jobs:
   build-windows:
     name: Build Windows
     runs-on: windows-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install PyInstaller
-        run: pip install pyinstaller
-
-      - name: Build (Windows)
-        run: |
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: python-version: "3.11"
+      - run: pip install pyinstaller
+      - run: |
           pyinstaller -F -n baseline Python/System_BaseLine_Check.py
           copy dist\baseline.exe dist\baseline-windows.exe
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: baseline-windows
           path: dist/baseline-windows.exe
 
   release:
-    name: Create Release
+    name: Release
     needs: [build-linux, build-windows]
     runs-on: ubuntu-latest
-
     steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v4
+        with: path: artifacts
+      - uses: softprops/action-gh-release@v2
+        env: GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          path: artifacts
-
-      - name: Publish to GitHub Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: ${{ github.ref_name }}
+          tag_name: System_BaseLine_Check
+          name: System_BaseLine_Check
           draft: false
           prerelease: false
           make_latest: true
@@ -95,5 +59,3 @@ jobs:
           files: |
             artifacts/baseline-linux/baseline-linux
             artifacts/baseline-windows/baseline-windows.exe
-          body: |
-            ## System Baseline Check 自动化构建（`${{ github.ref_name }}`）
