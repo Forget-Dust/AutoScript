@@ -10,6 +10,7 @@ permissions:
   releases: write
 
 jobs:
+  # ===================== Linux =====================
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
@@ -33,7 +34,8 @@ jobs:
 
       - name: Build (Linux)
         run: |
-          pyinstaller -F -n baseline Python/System_BaseLine_Check.py --exclude-module winreg
+          # ★ 注意：如果你的脚本在 Python 文件夹下，这里路径要改对
+          pyinstaller -F -n baseline Python/BaseLine_Check.py --exclude-module winreg
           cp dist/baseline dist/baseline-linux
 
       - name: Upload artifact
@@ -42,6 +44,7 @@ jobs:
           name: baseline-linux
           path: dist/baseline-linux
 
+  # ===================== Windows =====================
   build-windows:
     name: Build Windows
     runs-on: windows-latest
@@ -60,7 +63,8 @@ jobs:
 
       - name: Build (Windows)
         run: |
-          pyinstaller -F -n baseline Python\System_BaseLine_Check.py
+          # ★ 注意：Windows 用 && 连接命令更稳定，且统一使用正斜杠 / 或反斜杠 \
+          pyinstaller -F -n baseline Python/BaseLine_Check.py
           copy dist\baseline.exe dist\baseline-windows.exe
 
       - name: Upload artifact
@@ -69,6 +73,7 @@ jobs:
           name: baseline-windows
           path: dist/baseline-windows.exe
 
+  # ===================== Release =====================
   release:
     name: Create Release
     needs: [build-linux, build-windows]
@@ -87,9 +92,11 @@ jobs:
             artifacts/baseline-linux/baseline-linux
             artifacts/baseline-windows/baseline-windows.exe
           body: |
-            ## System Baseline Check 自动化构建
-
-            - `baseline-linux` → Linux (x86_64, glibc ≥ 2.39，Rocky 9 / Ubuntu 22.04+)
-            - `baseline-windows.exe` → Windows 10/11 / Server
-
-            使用：
+            ## System Baseline Check
+            
+            - `baseline-linux` → Linux (x86_64)
+            - `baseline-windows.exe` → Windows 10/11
+            
+            使用说明见项目 README.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
