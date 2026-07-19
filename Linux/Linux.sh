@@ -69,7 +69,7 @@ menu_thirdparty() {
     local ITEMS=(
         "返回主菜单"
         "换源 (LinuxMirrors)" "Docker (LinuxMirrors)"
-        "雷池 WAF (长亭)" "1Panel" "LinuxEnvConfig（适用apt系列）"
+        "雷池 WAF (长亭)" "1Panel" "LinuxEnvConfig（仅适用apt系列）"
     )
     local CMDS=(''
         'bash <(curl -sfkSL "https://linuxmirrors.cn/main.sh")'
